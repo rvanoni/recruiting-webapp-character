@@ -115,7 +115,7 @@ function CharacterSheet({ character, onDelete, onUpdate }) {
     const attributeModifier = SKILLS_MAP[skillName].attributeModifier
     const attributeValue = character.Attributes[attributeModifier]
     const skillPoints = character.Skills[skillName]
-    return calculateAbilityModifier(attributeValue) + skillPoints
+    return Math.max(0, calculateAbilityModifier(attributeValue) + skillPoints)
   }
 
   const usedSkills = Object.keys(character.Skills).reduce(
