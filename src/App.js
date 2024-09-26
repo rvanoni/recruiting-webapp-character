@@ -1,9 +1,9 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 import { styled } from 'styled-components'
 
 import './App.css'
-import { DEFAULT_CHARACTER } from './consts.js'
+import { DEFAULT_CHARACTER, ENDPOINT } from './consts.js'
 import CharacterSheet from './components/CharacterSheet'
 import Button, { DangerButton, PrimaryButton } from './components/Button.js'
 
@@ -37,12 +37,54 @@ function App() {
     setCharacters([...characters, newCharacter])
   }
 
-  const handleEraseAllCharacters = () => {
-    setCharacters([])
+  useEffect(() => {
+    const fetchCharacters = async () => {
+      try {
+        const response = await fetch(ENDPOINT, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        })
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch characters')
+        }
+
+        const data = await response.json()
+        if (data?.body) setCharacters(data.body)
+      } catch (error) {
+        console.error('Error fetching characters:', error)
+      }
+    }
+
+    fetchCharacters()
+  }, [])
+
+  const handleSaveCharacters = async (chars) => {
+    try {
+      const response = await fetch(ENDPOINT, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(chars),
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to save characters')
+      }
+
+      alert(`Characters saved successfully`)
+    } catch (error) {
+      console.error('Error saving characters:', error)
+      alert('Failed to save characters')
+    }
   }
 
-  const handleSaveCharacters = () => {
-    alert('TODO')
+  const handleEraseAllCharacters = () => {
+    setCharacters([])
+    handleSaveCharacters([])
   }
 
   return (
@@ -58,7 +100,9 @@ function App() {
           <DangerButton onClick={handleEraseAllCharacters}>
             Erase all characters
           </DangerButton>
-          <Button onClick={handleSaveCharacters}>Save characters</Button>
+          <Button onClick={() => handleSaveCharacters(characters)}>
+            Save characters
+          </Button>
         </ButtonGroup>
 
         {characters.map((character) => (

@@ -93,3 +93,6 @@ export const DEFAULT_CHARACTER = {
     Survival: 0,
   },
 }
+
+export const ENDPOINT =
+  'https://recruiting.verylongdomaintotestwith.ca/api/%7B%7Brvanoni%7D%7D/character'
